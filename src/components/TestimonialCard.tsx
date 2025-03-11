@@ -7,6 +7,7 @@ interface TestimonialCardProps {
   author: string;
   location: string;
   rating: number;
+  imageSrc?: string;
   delay?: number;
 }
 
@@ -15,6 +16,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   author, 
   location, 
   rating,
+  imageSrc,
   delay = 0 
 }) => {
   return (
@@ -40,6 +42,17 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       
       {/* Author */}
       <div className="flex items-center">
+        {imageSrc && (
+          <div className="mr-4">
+            <div className="w-12 h-12 rounded-full overflow-hidden">
+              <img 
+                src={imageSrc} 
+                alt={`${author} profile`} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
         <div>
           <p className="font-medium text-foreground">{author}</p>
           <p className="text-sm text-muted-foreground">{location}</p>

@@ -33,11 +33,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             alt={title} 
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         </div>
       )}
       
       {/* Content */}
-      <div className="p-6 bg-white">
+      <div className="p-6 bg-white glass-card">
         <div className="w-12 h-12 rounded-full bg-nature-100 flex items-center justify-center text-nature-600 mb-4">
           {icon}
         </div>
