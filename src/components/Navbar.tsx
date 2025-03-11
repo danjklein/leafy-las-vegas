@@ -2,11 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [service, setService] = useState('');
   const location = useLocation();
+  const { toast } = useToast();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
@@ -35,6 +42,25 @@ const Navbar = () => {
     { name: 'Gallery', path: '/gallery' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  const handleQuoteFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would normally submit the form data to an API
+    console.log('Quote form submitted', { name, email, phone, service });
+    
+    // Show success toast
+    toast({
+      title: "Quote Request Submitted",
+      description: "We'll contact you within 24 hours!",
+    });
+    
+    // Reset form
+    setName('');
+    setEmail('');
+    setPhone('');
+    setService('');
+    setShowQuoteForm(false);
+  };
 
   return (
     <header 
@@ -91,21 +117,32 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Contact Button (Desktop) */}
-        <div className="hidden md:block">
-          <Link to="/contact" className="btn-primary">
+        {/* Get a Free Quote Button (always visible on Desktop) */}
+        <div className="hidden md:flex">
+          <button 
+            className="btn-primary"
+            onClick={() => setShowQuoteForm(true)}
+          >
             Get a Free Quote
-          </Link>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-foreground p-2"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="md:hidden flex items-center space-x-4">
+          <button 
+            className="btn-primary btn-sm"
+            onClick={() => setShowQuoteForm(true)}
+          >
+            Free Quote
+          </button>
+          <button
+            className="text-foreground p-2"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
         {/* Mobile Navigation */}
         {isOpen && (
@@ -123,14 +160,99 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <Link 
-                to="/contact" 
+              <button 
                 className="btn-primary mt-4 text-center"
-                onClick={closeMenu}
+                onClick={() => {
+                  closeMenu();
+                  setShowQuoteForm(true);
+                }}
               >
                 Get a Free Quote
-              </Link>
+              </button>
             </nav>
+          </div>
+        )}
+
+        {/* Quote Form Modal */}
+        {showQuoteForm && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fade-in">
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 animate-slide-up">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">Request a Free Quote</h3>
+                <button 
+                  onClick={() => setShowQuoteForm(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <form onSubmit={handleQuoteFormSubmit}>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone</label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="service" className="block text-sm font-medium mb-1">Service Needed</label>
+                    <select
+                      id="service"
+                      value={service}
+                      onChange={(e) => setService(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded"
+                      required
+                    >
+                      <option value="">Select a service</option>
+                      <option value="tree-trimming">Tree Trimming & Pruning</option>
+                      <option value="tree-removal">Tree Removal</option>
+                      <option value="tree-health">Tree Health Care</option>
+                      <option value="palm-trimming">Palm Tree Maintenance</option>
+                      <option value="consultation">Arborist Consultation</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    className="w-full btn-primary py-2"
+                  >
+                    Submit Request
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
